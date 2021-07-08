@@ -24,7 +24,7 @@ class Wallet:
     def add_balance(self,amount):
 
         self.balance += amount
-        self.send("Le portefeuille d'id " + self.unique_id + " a recu un montant de " + amount)
+        self.send("Le portefeuille d'id " + self.unique_id + " a recu un montant de " + str(amount))
 
         #cette fonction ajoute un montant à l'attribut balance
 
@@ -43,6 +43,7 @@ class Wallet:
     def send(self,transaction):
 
         self.history.append(transaction)
+        return "Tout est Okay"
 
         #cette fonction ajoute la transaction à l'attribut history
         
