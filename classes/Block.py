@@ -2,17 +2,24 @@ class Block:
 
     #Un block doit contenir un nom, une taille inférieure a 256Ko, un parent et une
     #liste de transactions
+    def __init__(self):
+        
+        self.base_hash = ""
+        self.hash = ""
+        self.parent_hash = ""
+        self.transactions = ""
+
 
     #Les attributs à mettre en place sont la base_hash, le hash, le parent_hash, les transactions
 
-    def check_hash():
+    def check_hash(self):
 
         pass
 
         #vérifie que le hash est correct en fonction du base_hash
 
 
-    def add_transaction():
+    def add_transaction(self):
 
         pass
 
@@ -20,21 +27,21 @@ class Block:
         #emetteur et un wallet récepteur et doit contenir un montant
 
 
-    def get_transaction():
+    def get_transaction(self):
 
         pass
 
         #Cette méthode récupère une transaction par rapport à son numéro
 
 
-    def get_weight():
+    def get_weight(self):
 
         pass
 
         #Cette méthode récupère le poids total du bloc
 
     
-    def save():
+    def save(self):
 
         pass
 
@@ -42,7 +49,7 @@ class Block:
         #pour nom l'id unique du block
 
     
-    def load():
+    def load(self):
 
         pass
 
