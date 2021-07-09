@@ -2,6 +2,8 @@ from classes.Block import Block
 import uuid
 import hashlib
 import json
+import random
+import os
 
 class Chain:
 
@@ -12,22 +14,31 @@ class Chain:
         #créer l'attribut last_transaction_number (dernier num de transaction enregistré)
         self.last_transaction_number = ""
 
+    def create_string(self):
+
+        string = random.randint(0,1000000000000000000000000000000000)
+        return str(string)
+
+
     def generate_hash(self):
 
-        hash = hashlib.sha256(self.blocks.encode()).hexdigest() #remplacer le a par la chaine
+        hash = hashlib.sha256(self.create_string().encode()).hexdigest()
+        iterate = 0
+
+        while not(self.verify_hash(hash)):
+            hash = hashlib.sha256(self.create_string().encode()).hexdigest() #remplacer le a par la chaine
+            iterate += 1
+            print(hash)
+        print(iterate)
         return hash
 
 
-    def verify_hash(self):
+    def verify_hash(self,hash):
 
-        hash = self.generate_hash()
-
-        keys = json.loads("content/blocs/blocs.json")
-
-        if hash in keys or hash[:4] != "0000":
-            return "Le hash ne correspond pas aux critères."
+        if (os.path.exists("./content/blocs/" + hash + ".json")) or hash[:4] != "0000":
+            return False
         else:
-            return hash
+            return True
 
         #methode qui vérifie si un hash correspond aux critères de la chaine à savoir
         #le hash ne doit pas déja exister, et le hash doit commencer par 0000

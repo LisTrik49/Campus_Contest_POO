@@ -6,7 +6,7 @@ class Wallet:
 
     def __init__(self):    
         #créer un unique_id
-        self.unique_id = "tr23EHFH"
+        self.unique_id = ""
         #créer un balance (c'est a dire le solde du wallet, il contient un nombre)
         self.balance = 100
         #créer un history (qui contient l'historique de toutes les transactions)
@@ -18,13 +18,15 @@ class Wallet:
 
         while (os.path.exists("./content/wallets/" + self.unique_id + ".json")):
             self.unique_id = str(uuid.uuid4())
+        self.save()
         return self.unique_id
 
 
     def add_balance(self,amount):
 
         self.balance += amount
-        self.send("Le portefeuille d'id " + self.unique_id + " a recu un montant de " + str(amount))
+        self.send("Credit : " + str(amount))
+        self.save()
 
         #cette fonction ajoute un montant à l'attribut balance
 
@@ -33,9 +35,10 @@ class Wallet:
 
         if self.balance >= amount:
             self.balance -= amount
-            self.send("Le portefeuille d'id " + self.unique_id + " a été débité d'un montant de " + amount)
+            self.send("Debit : " + str(amount))
+            self.save()
         else:
-            return "Le portefeuille ne dispose pas des fonds nécessaires à la transaction."
+            return False
 
         #cette fonction retire un montant à l'attribut balance
 
@@ -43,7 +46,6 @@ class Wallet:
     def send(self,transaction):
 
         self.history.append(transaction)
-        return "Tout est Okay"
 
         #cette fonction ajoute la transaction à l'attribut history
         
@@ -60,8 +62,13 @@ class Wallet:
         #il faut enregistrer le wallet au format json dans le dossier content/wallets avec
         #pour nom l'id unique du wallet
 
-    #def load(self):
+    def load(self, wallet_id):
 
-    #    pass
+        if (os.path.exists("./content/wallets/" + self.unique_id + ".json")):
+            with open("content/wallets/" + wallet_id + ".json", "r") as read_file:
+                data = json.load(read_file)
+        else:
+            data = "Ce portefeuille n'existe pas."
+        return data
 
         #il faut ici pouvoir charger les informations d'un wallet grâce à son id
