@@ -1,16 +1,21 @@
-from classes.Block import Block
-import uuid
 import hashlib
 import json
 import random
 import os
+from classes.Block import Block
+
+PATH_TO_BLOCS = "./content/blocs/"
+PATH_TO_WALLETS = "./content/wallets/"
+EXT_JSON = ".json"
 
 class Chain:
 
     def __init__(self):
     
+        block1 = Block()
+        block1.save(block1.hash)
         #créer l'attribut blocks (liste des blocs au sein de la chaine)
-        self.blocks = []
+        self.blocks = [block1]
         #créer l'attribut last_transaction_number (dernier num de transaction enregistré)
         self.last_transaction_number = ""
 
@@ -22,20 +27,24 @@ class Chain:
 
     def generate_hash(self):
 
-        hash = hashlib.sha256(self.create_string().encode()).hexdigest()
-        iterate = 0
+        string = self.create_string()
+        hash = hashlib.sha256(string.encode()).hexdigest()
 
         while not(self.verify_hash(hash)):
-            hash = hashlib.sha256(self.create_string().encode()).hexdigest() #remplacer le a par la chaine
-            iterate += 1
+            string = self.create_string()
+            hash = hashlib.sha256(string.encode()).hexdigest() #remplacer le a par la chaine
             print(hash)
-        print(iterate)
-        return hash
+        
+        block = Block()
+        block.base_hash = string
+        block.hash = hash
+
+        return block
 
 
     def verify_hash(self,hash):
 
-        if (os.path.exists("./content/blocs/" + hash + ".json")) or hash[:4] != "0000":
+        if (os.path.exists(PATH_TO_BLOCS + hash + EXT_JSON)) or hash[:4] != "0000":
             return False
         else:
             return True
@@ -44,63 +53,29 @@ class Chain:
         #le hash ne doit pas déja exister, et le hash doit commencer par 0000
 
 
-    def add_block(self):
+    def get_parent_hash(self,block):
 
-        
+        block.parent_hash = self.blocks[-1].hash
+        return block.parent_hash
 
-        pass
+    def add_block(self, block):
+
+        block.parent_hash = self.get_parent_hash(block)
+        block.save(block.hash)
+        self.blocks.append(block)
 
         #methode qui crée un block, une fois un hash trouvé, on utilise cette méthode
         #on enregistre alors le block dans la chaine grace à la méthode save créée
         #dans la classe block, il faut vérifier que le block n'existe pas déja
 
 
-    def get_block(self):
+    def get_block(self, hash):
 
-        pass
+        if (os.path.exists(PATH_TO_BLOCS + hash + EXT_JSON)):
+            with open(PATH_TO_BLOCS + hash + EXT_JSON, "r") as read_file:
+                data = json.load(read_file)
+        else:
+            data = "Ce block n'existe pas."
+        return data
 
-        #On va juste récupérer un block en fonction de son hash
-
-    
-    def add_transaction(self):
-
-        pass
-        
-        #On ajoute une transaction à un block
-
-
-    def verify_wallet_exists(self):
-
-        pass
-
-        #Il faut vérifier que les wallets de l'émetteur et du récepteur existent
-
-    
-    def verify_wallet_has_enough(self):
-
-        pass
-
-        #Vérifie que le wallet a assez de fonds pour effectuer la transaction
-
-    
-    def verify_can_write_transaction_on_block(self):
-
-        pass
-
-        #Vérifie qu'on peut écrire la transaction sur un block
-
-
-    def find_transaction(self):
-
-        pass
-
-        #Elle doit retourner l'objet Block dans lequel se trouve la transaction demandé en
-        #paramètre
-
-    
-    def get_last_transaction_number(self):
-
-        pass
-
-        #Elle retourne la dernière transaction réalisée
-        #Faire un système de last_insert_transaction
+        # On va juste récupérer un block en fonction de son hash
